@@ -2,7 +2,9 @@
 
 NEXUS is a modern, Flask-based research assistant that orchestrates a pipeline of specialized AI agents to gather, analyze, and synthesize information on any given topic. Powered by the Gemini 2.5 Flash model, NEXUS leverages real-time Google Search to provide up-to-date insights beyond its training data.
 
-![NEXUS UI](https://raw.githubusercontent.com/MohammedTalha2005/AI-Research-Assistant/main/screenshot.png) (Replace with an actual screenshot if available)
+## 🖼️ NEXUS UI
+
+![NEXUS UI](assets/nexus-ui.png)
 
 ## 🚀 Features
 
@@ -26,7 +28,7 @@ NEXUS is a modern, Flask-based research assistant that orchestrates a pipeline o
 ### 1. Prerequisites
 
 - Python 3.8+
-- A Google Gemini API Key ([Get one here](https://aistudio.google.com/app/apikey))
+- A Google Gemini API Key 
 
 ### 2. Clone the Repository
 
@@ -51,20 +53,8 @@ GEMINI_API_KEY=your_actual_api_key_here
 
 ### 5. Run the Application
 
-You can start the server using the provided batch script:
-
-```bash
-run.bat
-```
-
-Or manually with Python:
-
 ```bash
 python app.py
 ```
 
 Access the UI at `http://localhost:5000`
-
-## 📄 License
-
-This project is licensed under the MIT License.
