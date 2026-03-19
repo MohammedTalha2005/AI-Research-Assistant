@@ -10,7 +10,7 @@ NEXUS is a modern, Flask-based research assistant that orchestrates a pipeline o
   - 🔎 **Research**: Gathers facts using Google Search.
   - 🧠 **Analysis**: Synthesizes and reasons through evidence.
   - ✍️ **Writer**: Drafts a comprehensive structured report.
-  - ⚖️ **Critic**: Evaluates the output for accuracy and tone.
+  - ⚖️ **Chart**: Visualises data.
 - **Real-Time Data**: Bypasses knowledge cutoffs with live search tools.
 - **Glassmorphic UI**: High-fidelity dark-themed interface with progress visualization.
 - **Export Ready**: Save your research reports as PDF for easy sharing.
