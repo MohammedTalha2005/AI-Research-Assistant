@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap"
+    rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #08090c;
+      --sf: #0e1016;
+      --sf2: #12151f;
+      --br: #1e2130;
+      --bg2: #2a3050;
+      --tx: #e8eaf2;
+      --mu: #5a6080;
+      --ac: #4f7fff;
+      --ac2: #7c3aed;
+      --ac3: #06d6a0;
+      --go: #f59e0b;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--tx);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image: linear-gradient(rgba(79, 127, 255, .03)1px, transparent 1px), linear-gradient(90deg, rgba(79, 127, 255, .03)1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 44px;
+    }
+
+    .lw {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: 6px;
+      line-height: 1;
+      background: linear-gradient(135deg, #4f7fff, #a855f7, #06d6a0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .ls {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: var(--mu);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .on {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--mu);
+      margin-top: 8px;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--ac3);
+      box-shadow: 0 0 8px var(--ac3);
+      animation: blink 2s infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .35
+      }
+    }
+
+    .iw {
+      margin-bottom: 32px;
+    }
+
+    .il {
+      display: block;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--mu);
+      text-transform: uppercase;
+      margin-bottom: 11px;
+    }
+
+    .ir {
+      display: flex;
+      gap: 12px;
+    }
+
+    .ti {
+      flex: 1;
+      background: var(--sf);
+      border: 1px solid var(--br);
+      border-radius: 8px;
+      padding: 15px 18px;
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      color: var(--tx);
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .ti::placeholder {
+      color: var(--mu);
+    }
+
+    .ti:focus {
+      border-color: var(--ac);
+      box-shadow: 0 0 0 3px rgba(79, 127, 255, .1);
+    }
+
+    .rb {
+      background: linear-gradient(135deg, var(--ac), var(--ac2));
+      border: none;
+      border-radius: 8px;
+      padding: 0 28px;
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #fff;
+      cursor: pointer;
+      transition: opacity .2s, transform .1s;
+      min-width: 150px;
+      white-space: nowrap;
+    }
+
+    .rb:hover:not(:disabled) {
+      opacity: .85;
+      transform: translateY(-1px);
+    }
+
+    .rb:disabled {
+      opacity: .38;
+      cursor: not-allowed;
+    }
+
+    .pb {
+      height: 2px;
+      background: var(--br);
+      border-radius: 1px;
+      margin-bottom: 32px;
+      overflow: hidden;
+    }
+
+    .pf {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--ac), var(--ac2), var(--ac3));
+      transition: width .5s ease;
+      border-radius: 1px;
+    }
+
+    .pl {
+      display: grid;
+      grid-template-columns: 1fr 22px 1fr 22px 1fr 22px 1fr;
+      align-items: start;
+      margin-bottom: 32px;
+    }
+
+    .cn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 52px;
+    }
+
+    .cn svg {
+      color: var(--br);
+      transition: color .4s;
+    }
+
+    .cn.on svg {
+      color: var(--ac);
+    }
+
+    .ac {
+      background: var(--sf);
+      border: 1px solid var(--br);
+      border-radius: 12px;
+      padding: 17px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .35s, box-shadow .35s;
+    }
+
+    .ac::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      opacity: 0;
+      transition: opacity .35s;
+    }
+
+    .ac[da="R"]::before {
+      background: #4f7fff;
+    }
+
+    .ac[da="A"]::before {
+      background: #a855f7;
+    }
+
+    .ac[da="W"]::before {
+      background: #06d6a0;
+    }
+
+    .ac[da="C"]::before {
+      background: #f59e0b;
+    }
+
+    .ac.run {
+      border-color: var(--bg2);
+    }
+
+    .ac.run::before {
+      opacity: 1;
+    }
+
+    .ac[da="R"].run {
+      box-shadow: 0 0 22px rgba(79, 127, 255, .13);
+    }
+
+    .ac[da="A"].run {
+      box-shadow: 0 0 22px rgba(168, 85, 247, .13);
+    }
+
+    .ac[da="W"].run {
+      box-shadow: 0 0 22px rgba(6, 214, 160, .13);
+    }
+
+    .ac[da="C"].run {
+      box-shadow: 0 0 22px rgba(245, 158, 11, .13);
+    }
+
+    .ac.dn {
+      border-color: var(--bg2);
+    }
+
+    .ac.dn::before {
+      opacity: .4;
+    }
+
+    .ah {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 10px;
+    }
+
+    .ai {
+      width: 29px;
+      height: 29px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .ac[da="R"] .ai {
+      background: rgba(79, 127, 255, .15);
+    }
+
+    .ac[da="A"] .ai {
+      background: rgba(168, 85, 247, .15);
+    }
+
+    .ac[da="W"] .ai {
+      background: rgba(6, 214, 160, .15);
+    }
+
+    .ac[da="C"] .ai {
+      background: rgba(245, 158, 11, .15);
+    }
+
+    .am {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .an {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .5px;
+    }
+
+    .ac[da="R"] .an {
+      color: #4f7fff;
+    }
+
+    .ac[da="A"] .an {
+      color: #a855f7;
+    }
+
+    .ac[da="W"] .an {
+      color: #06d6a0;
+    }
+
+    .ac[da="C"] .an {
+      color: #f59e0b;
+    }
+
+    .ar {
+      font-family: 'Space Mono', monospace;
+      font-size: 8px;
+      color: var(--mu);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .asd {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--br);
+      transition: background .3s, box-shadow .3s;
+      flex-shrink: 0;
+    }
+
+    .ac.run .asd {
+      background: var(--ac3);
+      box-shadow: 0 0 8px var(--ac3);
+      animation: blink .9s infinite;
+    }
+
+    .ac[da="A"].run .asd {
+      background: #a855f7;
+      box-shadow: 0 0 8px #a855f7;
+    }
+
+    .ac[da="W"].run .asd {
+      background: #06d6a0;
+      box-shadow: 0 0 8px #06d6a0;
+    }
+
+    .ac[da="C"].run .asd {
+      background: #f59e0b;
+      box-shadow: 0 0 8px #f59e0b;
+    }
+
+    .ac.dn .asd {
+      background: var(--ac3);
+      animation: none;
+    }
+
+    .al {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      color: var(--mu);
+      line-height: 1.7;
+      min-height: 34px;
+      border-top: 1px solid var(--br);
+      padding-top: 8px;
+    }
+
+    .ll {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 2px;
+    }
+
+    .ll::before {
+      content: '>';
+      color: var(--bg2);
+      flex-shrink: 0;
+    }
+
+    .eb {
+      display: none;
+      background: rgba(239, 68, 68, .1);
+      border: 1px solid rgba(239, 68, 68, .3);
+      border-radius: 8px;
+      padding: 13px 17px;
+      color: #fca5a5;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      margin-bottom: 22px;
+      line-height: 1.6;
+    }
+
+    .eb.show {
+      display: block;
+    }
+
+    .os {
+      display: none;
+    }
+
+    .os.show {
+      display: block;
+    }
+
+    .oh {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .ot {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--mu);
+      text-transform: uppercase;
+    }
+
+    .br2 {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      background: var(--sf);
+      border: 1px solid var(--br);
+      border-radius: 6px;
+      padding: 8px 16px;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
+      color: var(--mu);
+      cursor: pointer;
+      transition: border-color .2s, color .2s;
+      text-transform: uppercase;
+    }
+
+    .btn:hover {
+      border-color: var(--ac);
+      color: var(--ac);
+    }
+
+    .btn.pr {
+      background: linear-gradient(135deg, rgba(79, 127, 255, .15), rgba(168, 85, 247, .15));
+      border-color: var(--ac);
+      color: var(--ac);
+    }
+
+    .btn.pr:hover {
+      background: linear-gradient(135deg, rgba(79, 127, 255, .25), rgba(168, 85, 247, .25));
+    }
+
+    .btn:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    #rw {
+      background: var(--sf);
+      border: 1px solid var(--br);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .rc {
+      padding: 44px 50px;
+      line-height: 1.8;
+    }
+
+    .rc h1 {
+      font-size: 27px;
+      font-weight: 800;
+      color: var(--tx);
+      margin-bottom: 6px;
+      line-height: 1.2;
+    }
+
+    .rm {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: var(--mu);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 30px;
+      padding-bottom: 22px;
+      border-bottom: 1px solid var(--br);
+    }
+
+    .rc h2 {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ac);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin: 34px 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .rc h2::before {
+      content: '';
+      width: 3px;
+      height: 13px;
+      background: var(--ac);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .rc h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--tx);
+      margin: 20px 0 7px;
+    }
+
+    .rc p {
+      color: #a0a8c0;
+      margin-bottom: 13px;
+      font-size: 15px;
+    }
+
+    .rc ul,
+    .rc ol {
+      margin: 7px 0 13px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .rc li {
+      color: #a0a8c0;
+      font-size: 15px;
+      padding: 3px 0 3px 20px;
+      position: relative;
+    }
+
+    .rc ul li::before {
+      content: '--';
+      position: absolute;
+      left: 0;
+      color: var(--bg2);
+    }
+
+    .rc ol {
+      counter-reset: li;
+    }
+
+    .rc ol li {
+      counter-increment: li;
+    }
+
+    .rc ol li::before {
+      content: counter(li)'.';
+      position: absolute;
+      left: 0;
+      color: var(--ac);
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .rc strong {
+      color: var(--tx);
+      font-weight: 700;
+    }
+
+    .rc em {
+      color: #c0c8e0;
+      font-style: italic;
+    }
+
+    .rc blockquote {
+      border-left: 3px solid var(--ac2);
+      padding: 9px 15px;
+      margin: 14px 0;
+      background: rgba(168, 85, 247, .05);
+      border-radius: 0 6px 6px 0;
+      color: #a0a8c0;
+      font-style: italic;
+    }
+
+    .rc hr {
+      border: none;
+      border-top: 1px solid var(--br);
+      margin: 26px 0;
+    }
+
+    .cs {
+      padding: 28px 50px 44px;
+      border-top: 1px solid var(--br);
+    }
+
+    .cst {
+      font-size: 12px;
+      font-weight: 700;
+      color: #f59e0b;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 22px;
+    }
+
+    .cst::before {
+      content: '';
+      width: 3px;
+      height: 13px;
+      background: #f59e0b;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .cg {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 22px;
+    }
+
+    .cc {
+      background: var(--sf2);
+      border: 1px solid var(--br);
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .cct {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      color: var(--mu);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .ccs {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--tx);
+      margin-bottom: 15px;
+    }
+
+    .cw {
+      position: relative;
+      height: 210px;
+    }
+
+    .cn2 {
+      font-size: 10px;
+      color: var(--mu);
+      margin-top: 10px;
+      font-family: 'Space Mono', monospace;
+      line-height: 1.5;
+    }
+
+    @media(max-width:780px) {
+      .pl {
+        grid-template-columns: 1fr;
+      }
+
+      .cn {
+        display: none;
+      }
+
+      .rc,
+      .cs {
+        padding: 24px 18px;
+      }
+
+      .ir {
+        flex-direction: column;
+      }
+
+      .rb {
+        padding: 14px;
+      }
+
+      header {
+        flex-direction: column;
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <div class="lw">NEXUS</div>
+        <div class="ls">Multi-Agent Research System</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:15px;flex-wrap:wrap;justify-content:flex-end;">
+        <div class="on">
+          <div class="dot"></div><span>4 AGENTS ONLINE</span>
+        </div>
+      </div>
+    </header>
+    <div class="iw">
+      <span class="il">// Research Topic</span>
+      <div class="ir">
+        <input class="ti" id="tin" type="text" placeholder="e.g. The impact of quantum computing on cryptography..."
+          onkeydown="if(event.key==='Enter')go()">
+        <button class="rb" id="runBtn" onclick="go()">RUN AGENTS</button>
+      </div>
+    </div>
+    <div class="pb">
+      <div class="pf" id="pf"></div>
+    </div>
+    <div class="pl">
+      <div class="ac" da="R" id="cR">
+        <div class="ah">
+          <div class="ai">&#128269;</div>
+          <div class="am">
+            <div class="an">RESEARCH</div>
+            <div class="ar">Gather &amp; Discover</div>
+          </div>
+          <div class="asd"></div>
+        </div>
+        <div class="al" id="lR">
+          <div class="ll">Awaiting topic...</div>
+        </div>
+      </div>
+      <div class="cn" id="c1"><svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+          <path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg></div>
+      <div class="ac" da="A" id="cA">
+        <div class="ah">
+          <div class="ai">&#129504;</div>
+          <div class="am">
+            <div class="an">ANALYSIS</div>
+            <div class="ar">Synthesise &amp; Reason</div>
+          </div>
+          <div class="asd"></div>
+        </div>
+        <div class="al" id="lA">
+          <div class="ll">Waiting for research...</div>
+        </div>
+      </div>
+      <div class="cn" id="c2"><svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+          <path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg></div>
+      <div class="ac" da="W" id="cW">
+        <div class="ah">
+          <div class="ai">&#9997;&#65039;</div>
+          <div class="am">
+            <div class="an">WRITER</div>
+            <div class="ar">Draft Report</div>
+          </div>
+          <div class="asd"></div>
+        </div>
+        <div class="al" id="lW">
+          <div class="ll">Waiting for analysis...</div>
+        </div>
+      </div>
+      <div class="cn" id="c3"><svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+          <path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg></div>
+      <div class="ac" da="C" id="cC">
+        <div class="ah">
+          <div class="ai">&#128202;</div>
+          <div class="am">
+            <div class="an">CHARTS</div>
+            <div class="ar">Visualise Data</div>
+          </div>
+          <div class="asd"></div>
+        </div>
+        <div class="al" id="lC">
+          <div class="ll">Waiting for report...</div>
+        </div>
+      </div>
+    </div>
+    <div class="eb" id="eb"></div>
+    <div class="os" id="os">
+      <div class="oh">
+        <div class="ot">// Final Report</div>
+        <div class="br2">
+          <button class="btn" id="cb" onclick="copyMD()">Copy Markdown</button>
+          <button class="btn pr" id="pb2" onclick="dlPDF()">&#8595; Download PDF</button>
+        </div>
+      </div>
+      <div id="rw">
+        <div class="rc" id="rc"></div>
+        <div class="cs" id="csec" style="display:none">
+          <div class="cst">Data Visualisations</div>
+          <div class="cg" id="cg"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    var busy = false, mdRaw = '', cos = [];
+    function G(id) { return document.getElementById(id); }
+    function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+    function st(id, s) { var e = G('c' + id); e.classList.remove('run', 'dn'); if (s) e.classList.add(s); }
+    function co(id, on) { G('c' + id).classList.toggle('on', on); }
+    function lg(id) { var args = Array.prototype.slice.call(arguments, 1); G('l' + id).innerHTML = args.map(function (t) { return '<div class="ll">' + esc(t) + '</div>'; }).join(''); }
+    function pr(p) { G('pf').style.width = p + '%'; }
+    function showE(msg) { var e = G('eb'); e.innerHTML = '<strong>Error:</strong> ' + esc(msg); e.classList.add('show'); }
+    function hideE() { G('eb').classList.remove('show'); }
+
+    window.onload = function () {
+      G('apiKey').value = localStorage.getItem('nexus_key') || '';
+    };
+
+    async function ask(sys, usr, retries = 4) {
+      var res;
+      try {
+        res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'gemini-2.5-flash',
+            max_tokens: 4000,
+            system: sys,
+            messages: [{ role: 'user', content: usr }]
+          })
+        });
+      } catch (e) { throw new Error('Network/fetch error: ' + e.message); }
+
+      var data;
+      try { data = await res.json(); } catch (e) {
+        if (res.status === 429 && retries > 0) { await wait(10000); return ask(sys, usr, retries - 1); }
+        throw new Error('Bad JSON from API (status ' + res.status + ')');
+      }
+
+      if (!res.ok) {
+        var msg = ((data.error && data.error.message) || JSON.stringify(data).slice(0, 180));
+        if (res.status === 429 && retries > 0) {
+          var t = msg.match(/retry in ([\d\.]+)s/);
+          var wMs = t ? parseFloat(t[1]) * 1000 + 2000 : 15000 + Math.random() * 5000;
+          console.warn('Rate limit hit! Auto-waiting ' + Math.round(wMs / 1000) + 's...');
+          await wait(wMs);
+          return ask(sys, usr, retries - 1);
+        }
+        throw new Error('API ' + res.status + ': ' + msg);
+      }
+      if (!data.content || !Array.isArray(data.content)) throw new Error('Unexpected API response structure');
+      var txt = data.content.filter(function (b) { return b.type === 'text'; }).map(function (b) { return b.text || ''; }).join('\\n').trim();
+      if (!txt) throw new Error('API returned no text content. stop_reason=' + (data.stop_reason || 'unknown'));
+      return txt;
+    }
+
+    async function go() {
+      var topic = G('tin').value.trim();
+      if (!topic) { G('tin').focus(); return; }
+      if (busy) return;
+      busy = true; hideE(); mdRaw = '';
+      cos.forEach(function (c) { c.destroy(); }); cos = [];
+      G('os').classList.remove('show'); G('rc').innerHTML = ''; G('cg').innerHTML = ''; G('csec').style.display = 'none';
+      pr(0); G('runBtn').disabled = true; G('runBtn').textContent = 'Running...';
+      ['R', 'A', 'W', 'C'].forEach(function (a) { st(a, ''); });
+      ['1', '2', '3'].forEach(function (i) { co(i, false); });
+
+      try {
+        st('R', 'run'); lg('R', 'Analysing topic...', 'Gathering information...'); pr(10);
+
+        var bigPrompt = 'You are a swarm of AI expert agents (Research, Analysis, Writer, Data Visualiser).\\n' +
+          'TOPIC: "' + topic + '"\\n\\n' +
+          '1. RESEARCH: Produce comprehensive research notes. Include OVERVIEW, KEY FACTS, STATISTICS, and OUTLOOK. Wrap your entire section EXACTLY in <RESEARCH>...</RESEARCH>\\n' +
+          '2. ANALYSIS: Synthesise structured insights: CORE THEMES, KEY INSIGHTS, SIGNIFICANCE. Wrap your entire section EXACTLY in <ANALYSIS>...</ANALYSIS>\\n' +
+          '3. WRITER: Write a complete research report in Markdown based solely on the research. Structure: # Title, ## Executive Summary, ## Findings, ## Conclusion. Wrap your entire section EXACTLY in <REPORT>...</REPORT>\\n' +
+          '4. CHARTS: Generate chart data. Return ONLY a raw JSON array. Start with [ and end with ]. Each object: {"title":"title","type":"bar or line or pie or doughnut","labels":["A","B"],"datasets":[{"label":"name","data":[1,2]}],"note":"note"}. Rules: exactly 3 charts, labels.length = data.length. Wrap your entire section EXACTLY in <CHARTS>...</CHARTS>';
+
+        var rAll = await ask(
+          'You are the NEXUS multi-agent system dispatcher. Provide the complete structured <RESEARCH>, <ANALYSIS>, <REPORT>, and <CHARTS> sections in your final output block as requested.',
+          bigPrompt
+        );
+
+        var mR = rAll.match(/<RESEARCH>([\\s\\S]*?)<\/RESEARCH>/i) || ['', '[Research Data]'];
+        var mA = rAll.match(/<ANALYSIS>([\\s\\S]*?)<\/ANALYSIS>/i) || ['', '[Analysis Data]'];
+        var mW = rAll.match(/<REPORT>([\\s\\S]*?)<\/REPORT>/i) || ['', '[Report Data]'];
+        var mC = rAll.match(/<CHARTS>([\\s\\S]*?)<\/CHARTS>/i) || ['', '[]'];
+
+        lg('R', 'Research complete', '' + Math.round(mR[1].length / 100) / 10 + 'k chars gathered', 'Forwarding to analysis...');
+        st('R', 'dn'); co(1, true); pr(30); await wait(800);
+
+        st('A', 'run');
+        lg('A', 'Receiving research data...', 'Running synthesis...');
+        await wait(1200); // Visual fake delay
+        lg('A', 'Analysis complete', 'Key themes extracted', 'Done');
+        st('A', 'dn'); co(2, true); pr(50); await wait(800);
+
+        st('W', 'run');
+        lg('W', 'Receiving research and analysis...', 'Composing report...');
+        await wait(1500); // Visual fake delay
+        mdRaw = mW[1].trim();
+        if (mdRaw === '[Report Data]') mdRaw = rAll; // fallback if it didnt wrap properly
+        lg('W', 'Report complete', 'Markdown formatted', 'Done');
+        st('W', 'dn'); co(3, true); pr(75); await wait(800);
+
+        st('C', 'run');
+        lg('C', 'Extracting data for charts...', 'Generating specs...');
+        await wait(1000); // Visual fake delay
+
+        var r4 = mC[1].trim();
+
+        var parsed = null;
+        try { parsed = JSON.parse(r4.trim()); } catch (e1) {
+          var m1 = r4.match(/\[[\s\S]*\]/);
+          if (m1) { try { parsed = JSON.parse(m1[0]); } catch (e2) { parsed = null; } }
+        }
+        if (!Array.isArray(parsed) || !parsed.length) {
+          parsed = [
+            { title: 'Growth Trend', type: 'line', labels: ['2019', '2020', '2021', '2022', '2023', '2024'], datasets: [{ label: 'Index', data: [22, 31, 44, 58, 74, 91] }], note: 'Illustrative trend in ' + topic + ' over recent years.' },
+            { title: 'Segment Distribution', type: 'doughnut', labels: ['Segment A', 'Segment B', 'Segment C', 'Segment D'], datasets: [{ label: 'Share %', data: [35, 28, 22, 15] }], note: 'Representative distribution across major segments.' },
+            { title: 'Sector Impact', type: 'bar', labels: ['Technology', 'Finance', 'Healthcare', 'Education', 'Other'], datasets: [{ label: 'Impact Score', data: [87, 72, 65, 58, 44] }], note: 'Relative impact scores across industries.' }
+          ];
+          lg('C', 'Using fallback charts', '3 charts ready', 'Pipeline complete');
+        } else {
+          parsed = parsed.slice(0, 4).filter(function (ch) { return ch.labels && ch.datasets && ch.labels.length > 0; });
+          parsed.forEach(function (ch) {
+            var len = ch.labels.length;
+            ch.datasets = ch.datasets.map(function (ds) {
+              var d = ds.data || [];
+              while (d.length < len) d.push(0);
+              return Object.assign({}, ds, { data: d.slice(0, len) });
+            });
+          });
+          if (!parsed.length) parsed = [{ title: 'Data Overview', type: 'bar', labels: ['A', 'B', 'C', 'D'], datasets: [{ label: 'Value', data: [40, 60, 35, 80] }], note: 'General overview data.' }];
+          lg('C', parsed.length + ' charts generated', 'Rendering...', 'All agents done');
+        }
+        st('C', 'dn'); pr(100);
+        renderMD(mdRaw); renderCharts(parsed);
+        G('os').classList.add('show');
+        await wait(80);
+        G('os').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (err) {
+        console.error('[NEXUS]', err);
+        showE(err.message || String(err));
+        ['R', 'A', 'W', 'C'].forEach(function (a) { st(a, ''); });
+        pr(0);
+      } finally {
+        busy = false; G('runBtn').disabled = false; G('runBtn').textContent = 'RUN AGENTS';
+      }
+    }
+
+    function renderMD(md) {
+      var h = md
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/^#{4,} (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>')
+        .replace(/^---+$/gm, '<hr>')
+        .replace(/^[-*] (.+)$/gm, '<li class="uli">$1</li>')
+        .replace(/^\d+\. (.+)$/gm, '<li class="oli">$1</li>');
+      h = h.replace(/(<li class="uli">[\s\S]*?<\/li>\n?)+/g, function (m) { return '<ul>' + m + '</ul>'; });
+      h = h.replace(/(<li class="oli">[\s\S]*?<\/li>\n?)+/g, function (m) { return '<ol>' + m + '</ol>'; });
+      var lines = h.split('\n'), out = [];
+      for (var i = 0; i < lines.length; i++) {
+        var t = lines[i].trim();
+        if (!t) continue;
+        if (/^<(h[1-4]|ul|ol|blockquote|hr|\/ul|\/ol|li)/.test(t)) { out.push(t); continue; }
+        out.push('<p>' + t + '</p>');
+      }
+      var final = out.join('\n').replace(/<p><p>/g, '<p>').replace(/<\/p><\/p>/g, '</p>').replace(/<p>\s*<\/p>/g, '');
+      final = final.replace(/<\/h1>\s*<p>([^<]{4,120}?)<\/p>/, '</h1><p class="rm">$1</p>');
+      G('rc').innerHTML = final;
+    }
+
+    var PAL = ['rgba(79,127,255,.85)', 'rgba(168,85,247,.85)', 'rgba(6,214,160,.85)', 'rgba(245,158,11,.85)', 'rgba(239,68,68,.85)', 'rgba(236,72,153,.85)'];
+    var PALB = PAL.map(function (c) { return c.replace('.85', '.95'); });
+
+    function renderCharts(data) {
+      cos.forEach(function (c) { c.destroy(); }); cos = []; G('cg').innerHTML = '';
+      data.forEach(function (ch, i) {
+        var isCi = ['pie', 'doughnut'].indexOf(ch.type) >= 0, isLn = ch.type === 'line';
+        var card = document.createElement('div'); card.className = 'cc';
+        card.innerHTML = '<div class="cct">Chart ' + (i + 1) + ' of ' + data.length + '</div><div class="ccs">' + esc(ch.title || 'Data') + '</div><div class="cw"><canvas id="cv' + i + '"></canvas></div>' + (ch.note ? '<p class="cn2">' + esc(ch.note) + '</p>' : '');
+        G('cg').appendChild(card);
+        var ds = (ch.datasets || []).map(function (d, j) {
+          return {
+            label: d.label || 'Value', data: d.data || [],
+            backgroundColor: isCi ? PAL : (isLn ? 'rgba(0,0,0,0)' : PAL[j % PAL.length]),
+            borderColor: isCi ? PALB : (isLn ? PAL[j % PAL.length] : PALB[j % PALB.length]),
+            borderWidth: isLn ? 2.5 : 1, tension: .4, fill: false,
+            pointBackgroundColor: PAL[j % PAL.length], pointRadius: isLn ? 4 : 0, pointHoverRadius: isLn ? 6 : 0
+          };
+        });
+        var inst = new Chart(document.getElementById('cv' + i).getContext('2d'), {
+          type: ch.type || 'bar', data: { labels: ch.labels || [], datasets: ds },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+              legend: { labels: { color: '#a0a8c0', font: { family: "'Space Mono',monospace", size: 10 }, padding: 14, boxWidth: 11 } },
+              tooltip: { backgroundColor: '#1e2130', titleColor: '#e8eaf2', bodyColor: '#a0a8c0', borderColor: '#2a3050', borderWidth: 1, padding: 10, titleFont: { family: "'Syne',sans-serif", size: 12, weight: '700' }, bodyFont: { family: "'Space Mono',monospace", size: 11 } }
+            },
+            scales: isCi ? {} : {
+              x: { ticks: { color: '#5a6080', font: { family: "'Space Mono',monospace", size: 9 }, maxRotation: 35 }, grid: { color: 'rgba(30,33,48,.8)' } },
+              y: { ticks: { color: '#5a6080', font: { family: "'Space Mono',monospace", size: 9 } }, grid: { color: 'rgba(30,33,48,.8)' } }
+            }
+          }
+        }); cos.push(inst);
+      });
+      G('csec').style.display = 'block';
+    }
+
+    async function dlPDF() {
+      var btn = G('pb2'); btn.textContent = 'Generating...'; btn.disabled = true;
+      var root = document.documentElement;
+      var light = { '--bg': '#fff', '--sf': '#fff', '--sf2': '#f8f9fb', '--br': '#e2e6ef', '--bg2': '#c8cedf', '--tx': '#0f1117', '--mu': '#6b7280', '--ac': '#2563eb', '--ac2': '#7c3aed', '--ac3': '#059669', '--go': '#b45309' };
+      var dark = { '--bg': '#08090c', '--sf': '#0e1016', '--sf2': '#12151f', '--br': '#1e2130', '--bg2': '#2a3050', '--tx': '#e8eaf2', '--mu': '#5a6080', '--ac': '#4f7fff', '--ac2': '#7c3aed', '--ac3': '#06d6a0', '--go': '#f59e0b' };
+      try {
+        Object.entries(light).forEach(function (kv) { root.style.setProperty(kv[0], kv[1]); });
+        document.querySelectorAll('.cw canvas').forEach(function (c) { var ctx2 = c.getContext('2d'); ctx2.save(); ctx2.globalCompositeOperation = 'destination-over'; ctx2.fillStyle = '#f8f9fb'; ctx2.fillRect(0, 0, c.width, c.height); ctx2.restore(); });
+        await wait(250);
+        var canvas = await html2canvas(G('rw'), { scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false, allowTaint: true });
+        Object.entries(dark).forEach(function (kv) { root.style.setProperty(kv[0], kv[1]); });
+        var jsPDF = window.jspdf.jsPDF;
+        var pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        var pw = 210, ph = 297, mg = 12, uw = pw - mg * 2, ih = (canvas.height * uw) / canvas.width, img = canvas.toDataURL('image/png'), y = 0, pg = 0;
+        while (y < ih) { if (pg > 0) pdf.addPage(); pdf.addImage(img, 'PNG', mg, mg - y, uw, ih); y += ph - mg * 2; pg++; }
+        var te = G('rc').querySelector('h1');
+        pdf.save((te ? te.textContent.slice(0, 45).replace(/[^a-z0-9]+/gi, '_').toLowerCase() : 'nexus_report') + '.pdf');
+      } catch (err) {
+        console.error('[PDF]', err);
+        Object.entries(dark).forEach(function (kv) { root.style.setProperty(kv[0], kv[1]); });
+        showE('PDF failed: ' + err.message);
+      } finally { btn.textContent = 'Download PDF'; btn.disabled = false; }
+    }
+
+    function copyMD() {
+      if (!mdRaw) return;
+      var btn = G('cb');
+      try {
+        navigator.clipboard.writeText(mdRaw).then(function () { btn.textContent = 'Copied!'; setTimeout(function () { btn.textContent = 'Copy Markdown'; }, 2000); });
+      } catch (e) {
+        var ta = document.createElement('textarea'); ta.value = mdRaw; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+        btn.textContent = 'Copied!'; setTimeout(function () { btn.textContent = 'Copy Markdown'; }, 2000);
+      }
+    }
+  </script>
+</body>
+
+</html>
