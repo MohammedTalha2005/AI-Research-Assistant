@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request, jsonify, make_response
 import requests
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -15,7 +18,7 @@ def index():
 @app.route("/api/chat", methods=["POST"])
 def chat():
     data = request.json
-    api_key = data.pop("api_key", "AIzaSyBr0kL9tFoi6pnVBO9k1Pz9eqQyZSgJMsg")
+    api_key = data.pop("api_key", os.environ.get("GEMINI_API_KEY"))
         
     system_prompt = data.get("system", "") + "\\n\\nThe current date is March 18, 2026. Prioritize recent data up to 2026, do not artificially stop at 2023."
     user_prompt = data.get("messages", [{"content": ""}])[0]["content"]
